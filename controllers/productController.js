@@ -1,57 +1,102 @@
-const products = require('../data/fakeDb');
+const Product = require('../models/product');
 // get all product
-const getAllProduct = (req,res)=>{
-    return res.json(products)
+const getAllProduct = async (req,res)=>{
+    try {
+        const products = await Product.find()
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
 };
 // get specific one
-const getSpecificProduct = (req,res)=>{
-    const {id} = req.params;
-    const result = products.find(p => p.id === Number(id));
-    if(!result){
-        return res.status(404).send("Products Not Found");
+const getSpecificProduct = async (req,res)=>{
+    try {
+        const {id} = req.params;
+        const result = await Product.findById(id)
+        if(!result){
+            return res.status(404).json({message : "Product Not Found"});
+        }
+        res.status(200).json(result)
+    } catch (error) {
+        res.status(500).json({error : error.message})
     }
-   return res.status(200).json(result);
 };
 // create one 
-const createProduct =(req,res)=>{
-    const {price,name} = req.body;
-    if(!price || !name){
-        return res.status(400).send("Missing Fields");
+const createProduct = async (req,res)=>{
+    try {
+        const {name,price} = req.body;
+        const newProduct = await Product.create({name,price});
+        res.status(201).json({message:"New Product Added",newProduct});
+    } catch (error) {
+        res.status(400).json({
+            message:"Something Went Wrong!",
+            error:error.message
+        });
     }
-    const newProduct = {
-        id:Date.now(),
-        name,
-        price
-    }
-    products.push(newProduct)
-    return res.status(201).json(newProduct)
-
 };
-// update product
-const updateProduct =(req,res)=>{
+// update product all field
+const replaceProduct = async (req,res)=>{
     const {id} = req.params;
-    const {name,price} = req.body;
-    const product = products.find( p => p.id === Number(id))
-    if(!product){
-        return res.status(404).send("Product Not Found");
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Not found" });
     }
-    if(name) product.name=name;
-    if(price) product.price=price;
-    return res.status(200).json({message:"Product Updated",product})
+    res.status(200).json({
+        message:"Product Updated",
+        updatedProduct
+    });
+    } catch (error) {
+        res.status(400).json({error:error.message});
+    }
+}
+// Update Product Partial
+const updateProduct = async (req,res) =>{
+    try {
+        const {id} = req.params;
+        const product = await Product.findByIdAndUpdate(
+            id,
+            req.body,
+            {
+                new:true,
+                runValidators:true
+            }
+        );
+        if(!product){
+            return res.status(404).json({message:"Not Found"})
+        }
+        res.status(200).json({
+            message:"Product Updated",
+            Product:product
+        });
+    } catch (error) {
+        res.status(400).json({message:error.message})
+    }
 }
 // delete product
-const deleteProduct=(req,res)=>{
-    const {id} = req.params;
-    const deleted = products.findIndex( p => p.id === Number(id));
-    if(deleted === -1){
-        return res.status(404).send("Product Not Found");
-    } 
-    const deletedProduct=products.splice(deleted,1);
-    
+const deletedProduct= async (req,res)=>{
+    try {
+        const {id} = req.params;
+        
+        const deleteProduct = await Product.findByIdAndDelete(id);
 
-    return res.status(200).json({
-        message:"Product Has Been Deleted",
-        Product:deletedProduct[0]
-    })
+        if(!deleteProduct){
+            return res.status(404).json({message:"Not Found"})
+        }
+
+        res.status(200).json({
+            message:"Product Has Been Deleted",
+            Product:deleteProduct
+        });
+    } catch (error) {
+        res.status(400).json({error:error.message})
+    }
 };
-module.exports ={getAllProduct,getSpecificProduct,createProduct,updateProduct,deleteProduct};
+module.exports ={getAllProduct,getSpecificProduct,createProduct,updateProduct,deletedProduct,replaceProduct};
