@@ -48,7 +48,7 @@ Create a `.env` file in the root directory:
 
 ```env
 MONGO_URI=your_mongodb_connection_string
-PORT=5000
+PORT=3000
 ```
 
 ---
