@@ -2,10 +2,6 @@
 ````md id="p9k2xa"
 # 🚀 Simple Express API
 
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
-
 A simple REST API built with **Node.js, Express, and MongoDB** to practice backend fundamentals like routing, validation, CRUD operations, and error handling.
 
 This project was built as part of my backend learning journey.
@@ -95,4 +91,3 @@ Tag: @mehdicanfly
 ```
 ```
 
-<img width="1816" height="1318" alt="code" src="https://github.com/user-attachments/assets/cd54bf89-905c-4904-9752-7710c2aac09a" />
